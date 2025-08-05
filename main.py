@@ -1,9 +1,8 @@
 import streamlit as st
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv  <-- DELETE THIS LINE
 
 # --- IMPORTS FROM OUR MODULES ---
-# All our custom modules are now being used.
 import ui_components
 import file_handler
 import llm_handler
@@ -23,8 +22,11 @@ def main():
     st.write("Your personal AI assistant for analyzing spreadsheets.")
 
     # --- LOAD ENVIRONMENT VARIABLES ---
-    load_dotenv()
+    # load_dotenv() <-- DELETE THIS LINE
+    # On Streamlit Cloud, the secret is automatically set as an environment variable.
+    # For local development, set the environment variable in your terminal.
     api_key = os.getenv("OPENAI_API_KEY")
+
 
     # --- INITIALIZE SESSION STATE ---
     if "messages" not in st.session_state:

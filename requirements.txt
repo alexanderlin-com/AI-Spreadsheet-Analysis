@@ -12,6 +12,3 @@ openai==1.35.7
 
 # HTTP client library used by the OpenAI library
 httpx==0.27.0
-
-# For loading environment variables from the .env file
-python-dotenv==1.0.1
