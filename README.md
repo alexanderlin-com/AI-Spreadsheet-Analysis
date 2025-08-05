@@ -20,7 +20,7 @@ You must "activate" the environment to start using it. The command differs sligh
 pip install -r requirements.txt
 
 
-streamlit run app.py
+streamlit run main.py
 
 
 deactivate
