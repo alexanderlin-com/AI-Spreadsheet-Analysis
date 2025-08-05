@@ -1,5 +1,8 @@
+# instructions for self
 
-# This creates a sub-folder named 'venv' in your project directory
+
+
+This creates a sub-folder named 'venv' in your project directory
 python -m venv venv
 
 
