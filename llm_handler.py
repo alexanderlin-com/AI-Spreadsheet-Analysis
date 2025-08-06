@@ -16,7 +16,7 @@ def initialize_client(api_key):
         # This is the core of the fix for the 'proxies' error.
         
         # Pass our custom, proxy-free HTTP client to the OpenAI client.
-        client = openai.OpenAI(api_key=api_key, http_client=http_client)
+        client = openai.OpenAI(api_key=api_key)
         return client
     except Exception as e:
         st.error(f"Failed to initialize OpenAI client: {e}")
