@@ -3,19 +3,9 @@ import streamlit as st
 
 def initialize_client(api_key):
     """
-    Initializes and returns the OpenAI client, ensuring no system proxies are used.
-
-    Args:
-        api_key (str): The user's OpenAI API key.
-
-    Returns:
-        An instance of the openai.OpenAI client if the key is valid, otherwise None.
+    Initializes and returns the OpenAI client.
     """
     try:
-        # Create an HTTP client that explicitly ignores system proxy settings.
-        # This is the core of the fix for the 'proxies' error.
-        
-        # Pass our custom, proxy-free HTTP client to the OpenAI client.
         client = openai.OpenAI(api_key=api_key)
         return client
     except Exception as e:
