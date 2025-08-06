@@ -1,6 +1,5 @@
 import openai
 import streamlit as st
-import httpx # <-- The new import to handle HTTP requests explicitly
 
 def initialize_client(api_key):
     """
@@ -15,7 +14,6 @@ def initialize_client(api_key):
     try:
         # Create an HTTP client that explicitly ignores system proxy settings.
         # This is the core of the fix for the 'proxies' error.
-        http_client = httpx.Client(proxies=None)
         
         # Pass our custom, proxy-free HTTP client to the OpenAI client.
         client = openai.OpenAI(api_key=api_key, http_client=http_client)
