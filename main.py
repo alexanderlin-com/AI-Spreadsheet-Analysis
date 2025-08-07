@@ -19,7 +19,7 @@ def main():
     )
 
     st.title("📊 DataChat AI")
-    st.write("Your personal AI assistant for analyzing spreadsheets.")
+    st.write("Your personal AI assistant for analyzing spreadsheets 6:03")
 
     # --- LOAD ENVIRONMENT VARIABLES ---
     # load_dotenv() <-- DELETE THIS LINE
