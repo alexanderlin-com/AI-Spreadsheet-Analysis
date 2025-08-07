@@ -68,11 +68,9 @@ def main():
     ui_components.render_chat_history()
 
     # --- MAIN CHAT LOGIC ---
-    # This is the primary interaction loop.
     if prompt := st.chat_input("Ask a question about your data..."):
-        # First, check for prerequisites
         if st.session_state.client is None:
-            st.warning("Please ensure your API key is set up correctly in your .env file.")
+            st.warning("Please set up your OpenAI API key.")
         elif st.session_state.dataframe is None:
             st.warning("Please upload a spreadsheet file first.")
         else:
@@ -81,17 +79,31 @@ def main():
             with st.chat_message("user"):
                 st.markdown(prompt)
 
-            # Get the AI's response
+            # This is the new execution flow
             with st.chat_message("assistant"):
-                with st.spinner("AI is analyzing..."):
-                    # Construct the full prompt for the AI
-                    messages_for_api = llm_handler.construct_prompt(st.session_state.dataframe, prompt)
-                    # Get the response from the AI
-                    ai_response = llm_handler.get_ai_response(st.session_state.client, messages_for_api)
+                with st.spinner("AI is writing code..."):
+                    # 1. Construct the prompt to ask the AI for code
+                    messages = llm_handler.construct_prompt(st.session_state.dataframe, prompt)
                     
-                    st.markdown(ai_response)
-                    # Add AI's response to the chat history
-                    st.session_state.messages.append({"role": "assistant", "content": ai_response})
+                    # 2. Get the code string back from the AI
+                    ai_code_response = llm_handler.get_ai_response(st.session_state.client, messages)
+
+                # (Optional but useful for us) Show the generated code
+                with st.expander("View Generated Code"):
+                    st.code(ai_code_response, language="python")
+
+                with st.spinner("Executing code..."):
+                    # 3. Execute the code using our new executor
+                    final_result = code_executor.safe_execute_code(
+                        code_string=ai_code_response,
+                        df=st.session_state.dataframe
+                    )
+
+                # 4. Display the final, verified result
+                st.markdown(final_result)
+                
+                # Add the actual result to the chat history
+                st.session_state.messages.append({"role": "assistant", "content": final_result})
 
 
 # --- SCRIPT ENTRY POINT ---
