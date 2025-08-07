@@ -26,27 +26,47 @@ def construct_prompt(df, user_question):
     """
     data_preview = df.head().to_string()
     column_names = ", ".join(map(str, df.columns))
+    row_count = len(df)
+    
+    # Generate a statistical summary for all columns
+    # 'include="all"' ensures we get summaries for categorical data too
+    df_description = df.describe(include='all').to_string()
 
     system_message = {
         "role": "system",
         "content": f"""
         You are a world-class data analyst AI. Your task is to help a user
-        understand their uploaded spreadsheet.
+        understand their uploaded spreadsheet. You are analyzing a dataset with {row_count} rows.
 
-        The data has the following columns: {column_names}.
-        Here is a preview of the first 5 rows:
-        ---
+        --- DATASET OVERVIEW ---
+        - Total Rows: {row_count}
+        - Columns: {column_names}
+
+        Here is a statistical summary of the entire dataset:
+        ```
+        {df_description}
+        ```
+
+        And here is a preview of the first 5 rows to show the data format:
+        ```
         {data_preview}
+        ```
         ---
-        
-        Analyze the data based on the user's questions. Provide clear, concise,
-        and helpful answers. When providing explanations, be direct and easy to
-        understand.
+
+        Based on the complete dataset information above, answer the user's questions.
+        Be clear, concise, and analyze the full {row_count} rows of data.
         """
     }
 
+    # The rest of the messages for the API call
     messages_for_api = [system_message]
-    messages_for_api.extend(st.session_state.messages)
+    
+    # We add the existing conversation, but filter out the initial welcome message from the assistant
+    # to avoid confusing the AI on subsequent turns.
+    # This is a small refinement to make the context cleaner.
+    for message in st.session_state.messages:
+        if "I've loaded the file" not in message["content"]:
+             messages_for_api.append(message)
 
     return messages_for_api
 
