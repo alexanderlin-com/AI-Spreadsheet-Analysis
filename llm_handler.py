@@ -15,21 +15,11 @@ def initialize_client(api_key):
 def construct_prompt(df, user_question):
     """
     Constructs the detailed prompt to be sent to the AI, including the
-    system message, data preview, and conversation history.
-
-    Args:
-        df (pd.DataFrame): The dataframe containing the user's data.
-        user_question (str): The latest question from the user.
-
-    Returns:
-        A list of message dictionaries, formatted for the OpenAI API.
+    system message, data preview, and the user's latest question.
     """
     data_preview = df.head().to_string()
     column_names = ", ".join(map(str, df.columns))
     row_count = len(df)
-    
-    # Generate a statistical summary for all columns
-    # 'include="all"' ensures we get summaries for categorical data too
     df_description = df.describe(include='all').to_string()
 
     system_message = {
@@ -63,15 +53,13 @@ def construct_prompt(df, user_question):
         """
     }
 
-    # The rest of the messages for the API call
-    messages_for_api = [system_message]
-    
-    # We add the existing conversation, but filter out the initial welcome message from the assistant
-    # to avoid confusing the AI on subsequent turns.
-    # This is a small refinement to make the context cleaner.
-    for message in st.session_state.messages:
-        if "I've loaded the file" not in message["content"]:
-             messages_for_api.append(message)
+    # We are no longer sending the entire chat history.
+    # We send the system message with the data context, and ONLY the user's latest question.
+    # This prevents the AI from getting confused by its own previous (and flawed) responses.
+    messages_for_api = [
+        system_message,
+        {"role": "user", "content": user_question}
+    ]
 
     return messages_for_api
 
